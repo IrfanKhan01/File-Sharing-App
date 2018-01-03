@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import firebase from 'firebase';
+import firebase from 'firebase';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 class Text extends Component {
@@ -41,6 +41,7 @@ class Text extends Component {
   }
 
   Save() {
+    firebase.database().ref('/').child('Text').set(this.state.value);
     this.setState({ flag: true })
   }
 
@@ -52,6 +53,11 @@ class Text extends Component {
     alert('Text has been copied')
   };
 
+  componentDidMount() {
+    firebase.database().ref('/').child('Text').on('value', snapshot=> {
+      this.setState({value: snapshot.val()})
+    })
+  }
   render() {
     return (
       <div>
