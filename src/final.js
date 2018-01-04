@@ -8,7 +8,6 @@ class Final extends Component {
         return (
             <div style={{marginTop: '5%'}}>
                 <h1 className='text-center'>SHARE YOUR CONTENT HERE</h1>
-                <p className='text-center'>Upto 5MB</p>
                 <div className='row'>
                     <div className='col-md-2'></div>
                     <div className='col-md-8'>
