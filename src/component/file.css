@@ -4,9 +4,11 @@ width: 93px;
 
 height: 28px;
 
-background: url('./images/file_browse_normal.png') 0 0 no-repeat;
+ background: url('./images/file_browse_normal.png') 0 0 no-repeat;
+ 
+ 
 
-border:none;
+border:'none';
 
 overflow:hidden;
 
@@ -34,4 +36,7 @@ opacity:0;
 
 filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
 
+}
+.float-right {
+    float: right
 }

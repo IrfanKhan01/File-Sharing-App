@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import firebase from 'firebase';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import {Button} from 'semantic-ui-react';
 
 class Text extends Component {
   constructor(prop) {
@@ -53,7 +54,7 @@ class Text extends Component {
     alert('Text has been copied')
   };
 
-  componentDidMount() {
+  componentWillMount() {
     firebase.database().ref('/').child('Text').on('value', snapshot=> {
       this.setState({value: snapshot.val()})
     })
@@ -65,10 +66,10 @@ class Text extends Component {
 
 
           <div className='row'>
-            <div className='col-md-3'>
+            <div className='col-md-2'>
 
             </div>
-            <div className='col-md-6'>
+            <div className='col-md-8'>
               <div>
                 <div style={{ marginTop: '5%' }} className='form-group'>
 
@@ -86,19 +87,19 @@ class Text extends Component {
                     <section>
                       <CopyToClipboard onCopy={this.onCopy} text={this.state.value}>
 
-                        <button className='btn btn-success btn-lg float-right'>Copy</button>
+                        <Button inverted color='blue' floated='right'>Copy</Button>
                       </CopyToClipboard>
                     </section>
 
                     :
 
-                    <button className='btn btn-info btn-lg float-right' onClick={this.Save}>Save</button>
+                    <Button inverted color='violet' floated='right' onClick={this.Save}>Save</Button>
 
                 }
-                <button className='btn btn-primary btn-lg' onClick={this.Clear}>Clear</button>
+                <Button color='purple' onClick={this.Clear}>Clear</Button>
               </div>
             </div>
-            <div className='col-md-3'></div>
+            <div className='col-md-2'></div>
           </div>
         </div>
 
