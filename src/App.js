@@ -1,9 +1,7 @@
 import React from 'react'
 import { Tab } from 'semantic-ui-react';
 import Text from './component/text';
-import File from './component/file'
-
-
+import File from './component/file';
 
 const panes = [
   { menuItem: 'Text', render: () => <Tab.Pane><Text/></Tab.Pane> },
@@ -11,7 +9,7 @@ const panes = [
 ]
 
 const App = () => (
-  <Tab panes={panes} />
+    <Tab panes={panes} />
 )
 
 export default App

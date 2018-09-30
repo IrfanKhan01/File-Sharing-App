@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import './file.css'
 import firebase from 'firebase';
-import { Button, Progress } from 'semantic-ui-react';
+import { Button, Progress, Segment } from 'semantic-ui-react';
 
 class File extends Component {
-
     constructor() {
         super();
         this.state = {
@@ -14,21 +13,22 @@ class File extends Component {
             prog: false,
             u: '',
             loadImg: '',
-            inputFile: 'click'
+            inputFile: 'click',
+            imageToRender: '',
         }
         this.handleSelect = this.handleSelect.bind(this);
         this.handleUpload = this.handleUpload.bind(this);
-        // this.handleDownload = this.handleDownload.bind(this)
     }
+
     handleSelect(event) {
         this.setState({
             loadImg: URL.createObjectURL(event.target.files[0])
         })
         this.setState({ file: event.target.files[0] });
         this.setState({ pic: this.state.file })
-        console.log(this.state.file.typeOf)
-
     }
+
+    browse() { this.refs.inputFile.click() }
 
     handleUpload() {
         this.setState({ prog: true })
@@ -37,10 +37,8 @@ class File extends Component {
         const task = filePath.put(this.state.file);
 
         task.on('state_changed', (snapshot) => {
-
-            this.setState({ percentage: (snapshot.bytesTransferred / snapshot.totalBytes) * 100 })
-
             this.setState({
+                percentage: ((snapshot.bytesTransferred / snapshot.totalBytes) * 100),
                 upload: this.state.percentage
             })
         }, (error) => {
@@ -50,82 +48,91 @@ class File extends Component {
         }, () => {
             this.setState({
                 message: 'Uploaded successfully',
-                picture: task.snapshot.downloadURL
             })
+            firebase.database().ref('/').child('Data/pictureURL').set(task.snapshot.downloadURL);
         });
+
         filePath.getDownloadURL().then((url) => {
-            console.log(url)
             this.setState({ u: url })
+            console.log(this.state.u)
         })
     }
 
-    browse() {
-        this.refs.inputFile.click()
-        
+    componentDidMount() {
+        firebase.database().ref('/').child('Data/pictureURL').on('value', snap => {
+            let imgUrl = snap.val();
+            console.log(imgUrl);
+            this.setState({
+                imageToRender: imgUrl
+            })
+        })
+        console.log(this.state.imageToRender);
+    }
+
+    shouldComponentUpdate(nextProp, nextState) {
+        console.log(nextState);
+        return true;
     }
 
     render() {
         return (
             <div>
-            <h1>File</h1>
-            <div style={{ marginTop: '5%' }}>
-               
-                <div className='row'>
-                    <div className='col-md-6'>
-                        <div className='card h-100'>
-                            <div className='card-body'>
-                                <div className='card'>
-                                    <div className='card-body text-center'>
-                                        <img className='img-fluid' width='150px' src={this.state.loadImg} alt=""/>
-                                    </div>
-                                </div>
-                                <div style={{ marginTop: '10%' }} className='text-center'>
-                                    <div>
+                <h1>File</h1>
+                <div>
+                    <div className='row'>
+                        <div className='col-md-6'>
+                            <div className='card h-100'>
+                                <div className='card-body'>
+                                    <Segment>
+                                        <img className='img-fluid' width='100px' src={this.state.loadImg} alt="" />
                                         {
-                                            this.state.prog ? <Progress percent={this.state.percentage} active={this.state.percentage >= 100 ? false : true} size='small' color='purple' /> : false
+                                            this.state.prog ?
+                                                <Progress percent={this.state.percentage} active={this.state.percentage >= 100 ? false : true} attached='bottom' color='purple' />
+                                                : false
                                         }
-                                    </div>
-                                    <div className='row'>
-                                        <div className='col-6'>
-                                            {/* <div className='text-center' id='file_browse_wrapper'> */}
+                                    </Segment>
+                                    <div style={{ marginTop: '5%' }}>{this.state.message}</div>
+                                    <div style={{ marginTop: '10%' }} className='text-center'>
+                                        <div className='row'>
+                                            <div className='col-6'>
                                                 <div className='text-center'>
-                                                
-                                                    {/* <input type='file' id='file_browse' onChange={this.handleSelect} /> */}
-                                                    <input type="file" ref='inputFile' onChange={this.handleSelect} style={{display:'none'}}/>
-                                                    <Button inverted color='purple' content='purple' onClick={this.browse.bind(this)}>Browse</Button>
-                                                
+                                                    <input type="file" ref='inputFile' onChange={this.handleSelect} style={{ display: 'none' }} />
+                                                    <Button inverted color='purple' onClick={this.browse.bind(this)}>Browse</Button>
+                                                </div>
+                                            </div>
+                                            <div className='col-6'>
+                                                <Button inverted color='violet' onClick={this.handleUpload}>Upload</Button>
                                             </div>
                                         </div>
-                                        <div className='col-6'>
-                                            <Button inverted color='violet' onClick={this.handleUpload}>Upload</Button>
-                                        </div>
                                     </div>
-                                    <div style={{ marginTop: '5%' }}>{this.state.message}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='col-md-6'>
+                            <div className='card h-100'>
+                                <div className='card-body text-center'>
+                                    <Segment>
+                                        {
+                                            this.state.imageToRender ?
+                                            <img className='img-fluid' width='100px'
+                                                    src={this.state.imageToRender} alt='download it' />
+                                            :
+                                            <p className='text-center'>There is no file...</p>
+                                        }
+                                    </Segment>
+                                    <div style={{ marginTop: '10%' }} className='text-center'>
+                                        <a className='btn btn-info' 
+                                            href={this.state.imageToRender} 
+                                            download={true}>Download</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className='col-md-6'>
-                        <div className='card h-100'>
-                            <div className='card-body'>
-                                <div className='card'>
-                                    <div className='card-body text-center'><img className='img-fluid' width='150px' src={this.state.picture} /></div>
-                                </div>
-                                <div style={{ marginTop: '10%' }} className='text-center'>
-                                    <a className='btn btn-info' href={this.state.u} download={true}>Download</a>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-
                 </div>
-            </div>
             </div>
         )
     }
-
 }
 
 export default File

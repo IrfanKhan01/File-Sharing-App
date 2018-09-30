@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-
+import './App.css';
 import Tab from './App';
 
 
@@ -7,16 +7,18 @@ class Final extends Component {
     
     render() {
         return (
-            <div style={{marginTop: '5%'}}>
-                <h1 className='text-center'> <span className='text-info'> SHARE YOUR CONTENT</span> <span className='text-warning'>GLOBALLY</span></h1>
-                <div className='row'>
-                    <div className='col-md-2'></div>
-                    <div className='col-md-8'>
+            <div>
+                <div className='centered'>
+                    <div className='child-container'>
+                        <h1 className='text-center'>
+                            <span className='text-info display-4'> SHARE YOUR CONTENT</span>
+                            <span className='text-warning display-4'> GLOBALLY</span>
+                        </h1>
                         <Tab />
                     </div>
-                    <div className='col-md-2'></div>
                 </div>
             </div>
+          
         )
     }
 }
